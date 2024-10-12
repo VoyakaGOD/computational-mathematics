@@ -1,0 +1,3 @@
+[submodule "nbdelta"]
+	path = nbdelta
+	url = git@github.com:VoyakaGOD/nbdelta.git
