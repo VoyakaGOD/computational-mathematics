@@ -75,6 +75,9 @@ class Matrix:
         
     def __rmatmul__(self, other : Matrix) -> Matrix:
         return self @ other
+    
+    def __truediv__(self, other : float) -> Matrix:
+        return self * (1 / other)
 
     def __eq__(self, other : Matrix) -> bool:
         if not isinstance(other, Matrix):
