@@ -1,5 +1,5 @@
 ![Jupyter Notebook](https://img.shields.io/badge/Jupyter_Notebook-F37726)
-![repo size](https://img.shields.io/badge/repo_size-273_kb-blue)
+![repo size](https://img.shields.io/badge/repo_size-303_kb-blue)
 
 Repository with laboratory works in computational mathematics.
 
@@ -14,3 +14,7 @@ Repository with laboratory works in computational mathematics.
 ### Lab III[solving nonlinear equations & systems]:
 
 ![lab3](lab3.png)
+
+### Lab IV[interpolation & extrapolation]:
+
+![lab4](lab4.png)
