@@ -93,6 +93,55 @@ class RungeKuttaMethods:
             k4 = f(t + h, u[n] + h * k3)
             u += [u[n] + h/6 * (k1 + 2*k2 + 2*k3 + k4)]
         return u
+    
+    @staticmethod
+    def implicit_1_order(f : VecTFunc, u0 : Vector, h : float, N : int, t0 : float = 0):
+        u = [u0]
+        for n in range(N):
+            t = t0 + n * h
+            F = lambda x: x - h*f(t + h, u[n] + x)
+            k1 = NonlinearSolver.solve_system(F, Vector.zeros(u0.m))
+            u += [u[n] + k1]
+        return u
+
+    @staticmethod
+    def implicit_2_order(f : VecTFunc, u0 : Vector, h : float, N : int, t0 : float = 0):
+        u = [u0]
+        for n in range(N):
+            t = t0 + n * h
+            F = lambda x: x - h*f(t + h/2, u[n] + x/2)
+            k1 = NonlinearSolver.solve_system(F, Vector.zeros(u0.m))
+            u += [u[n] + k1]
+        return u
+
+    @staticmethod
+    def implicit_3_order(f : VecTFunc, u0 : Vector, h : float, N : int, t0 : float = 0):
+        u = [u0]
+        for n in range(N):
+            t = t0 + n * h
+            g = 0.7887
+            F1 = lambda x: x - h*f(t + g*h, u[n] + g*x)
+            k1 = NonlinearSolver.solve_system(F1, Vector.zeros(u0.m))
+            F2 = lambda x: x - h*f(t + (1-g)*h, u[n] + (1-2*g)*k1 + g*x)
+            k2 = NonlinearSolver.solve_system(F2, Vector.zeros(u0.m))
+            u += [u[n] + (k1 + k2)/2]
+        return u
+    
+    @staticmethod
+    def implicit_4_order(f : VecTFunc, u0 : Vector, h : float, N : int, t0 : float = 0):
+        u = [u0]
+        for n in range(N):
+            t = t0 + n * h
+            F1 = lambda x: x - h*f(t + h/2, u[n] + x/2)
+            k1 = NonlinearSolver.solve_system(F1, Vector.zeros(u0.m))
+            F2 = lambda x: x - h*f(t + 2/3*h, u[n] + 2/3*x)
+            k2 = NonlinearSolver.solve_system(F2, Vector.zeros(u0.m))
+            F3 = lambda x: x - h*f(t + 1/2*h, u[n] - 5/2*k1 + 5/2*k2 + 1/2*x)
+            k3 = NonlinearSolver.solve_system(F3, Vector.zeros(u0.m))
+            F4 = lambda x: x - h*f(t + 1/3*h, u[n] - 5/3*k1 + 4/3*k2 + 2/3*x)
+            k4 = NonlinearSolver.solve_system(F4, Vector.zeros(u0.m))
+            u += [u[n] - k1 + 3/2*k2 - k3 + 3/2*k4]
+        return u
 
 # u0 = [u_0, ..., u_p], p - order of method
 class AdamsMethods:
@@ -220,4 +269,30 @@ class BDF:
             t = t0 + n * h
             F = lambda x: 25/12*x - 4*u[n] + 3*u[n-1] - 4/3*u[n-2] + 1/4*u[n-3] - h * f(t+h, x)
             u += [NonlinearSolver.solve_system(F, u[n])]
+        return u
+
+# for autonomus systems
+class RosenbrockWannerMethods:
+    @staticmethod
+    def implicit_1_order(f : VecFunc, u0 : Vector, h : float, N : int):
+        u = [u0]
+        J = Differetiator.J(f, u0)
+        dim = u0.m
+        A = Matrix.identity(dim) - h  * J
+        for n in range(N):
+            k1 = LinearSolver.solve_system(A, f(u[n]), Vector.zeros(dim))
+            u += [u[n] + h*k1]
+        return u
+    
+    @staticmethod
+    def implicit_2_order(f : VecFunc, u0 : Vector, h : float, N : int):
+        u = [u0]
+        g = 0.2929
+        J = Differetiator.J(f, u0)
+        dim = u0.m
+        A = Matrix.identity(dim)/h - g  * J
+        for n in range(N):
+            k1 = LinearSolver.solve_system(A, f(u[n]), Vector.zeros(dim))
+            k2 = LinearSolver.solve_system(A, f(u[n] + k1) - 2*J*k1, Vector.zeros(dim))
+            u += [u[n] + k1 + k2/2]
         return u

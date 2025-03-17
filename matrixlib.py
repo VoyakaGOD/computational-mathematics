@@ -147,12 +147,17 @@ class Matrix:
                 self.data[index][0] = value
         else:
             raise IndexError("invalid matrix index")
-        
+
     def expand(self, f : Vector) -> Matrix:
         return Matrix([row + [f[i]] for i, row in enumerate(self.data)])
-    
+
+    @staticmethod
     def zeros(m : int, n : int) -> Matrix:
         return Matrix([[0 for j in range(n)] for i in range(m)])
+
+    @staticmethod
+    def identity(n : int) -> Matrix:
+        return Matrix([[1 if i == j else 0 for j in range(n)] for i in range(n)])
 
 class Vector(Matrix):
     def __init__(self, *args):
@@ -161,6 +166,7 @@ class Vector(Matrix):
             data = args[0]
         super().__init__([[item] for item in data])
 
+    @staticmethod
     def zeros(size : int):
         return Vector([0 for i in range(size)])
 
