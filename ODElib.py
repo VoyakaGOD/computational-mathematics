@@ -100,5 +100,5 @@ class BDF:
         u = u0.copy()
         for n in range(3, N):
             t = t0 + n * h
-            u += [145/47*u[n] - 114/47*u[n-1] + 5/47*u[n-2] + 1/47*u[n-3] + 13*h * f(t, u[n])]
+            u += [-10/3*u[n] + 6*u[n-1] - 2*u[n-2] + 1/3*u[n-3] + 4*h * f(t, u[n])]
         return u
