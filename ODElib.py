@@ -4,11 +4,11 @@ from matrixlib import *
 VecTFunc = Callable[[float, Vector], Vector]
 VecFunc = Callable[[Vector], Vector]
 
-# solve Ax = f by Seidel, with initial approximation of x = x0
 class LinearSolver:
     norm = get_Euclidian_norm
     eps = 1e-9
 
+    # solve Ax = f by Seidel, with initial approximation of x = x0
     @staticmethod
     def solve_system(A : Matrix, f : Vector, x0 : Vector) -> Vector:
         f = A.T() * f
@@ -22,6 +22,49 @@ class LinearSolver:
                             + sum([A[i, j] * x[j] for j in range(i+1, n) if i != j]) 
                             - f[i]) / A[i, i]
             x, x_dual = x_dual, x
+        return x
+
+    # solve system in form A_i*x_{i-1} + B_i*x_i + C_i*x_{i+1} = f_i
+    @staticmethod
+    def solve_tridiagonal(As : tuple[float], Bs : tuple[float], Cs : tuple[float], f : Vector):
+        a = [0, -Cs[0] / Bs[0]]
+        b = [0, f[0] / Bs[0]]
+        n = f.m - 1
+        for i in range(1, n):
+            denominator = a[i]*As[i] + Bs[i]
+            a += [-Cs[i] / denominator]
+            b += [(f[i] - As[i]*b[i]) / denominator]
+        x = Vector.zeros(n + 1)
+        x[n] = (f[n] - b[n]*As[n]) / (Bs[n] + a[n]*As[n])
+        for i in range(n, 0, -1):
+            x[i-1] = a[i]*x[i] + b[i]
+        return x
+
+    # solve system in form A_i*x_{i-1} + B_i*x_i + C_i*x_{i+1} = f_i, 0 < i < (n-1)
+    # B_0*x_0 + C_1*x_1 + A_0*x_{n-1} = f_0
+    # C_{n-1}*x_0 + A_{n-1}*x_{n-2} + B_{n-1}*x_{n-1} = f_{n-1}
+    @staticmethod
+    def solve_cyclic_tridiagonal(As : tuple[float], Bs : tuple[float], Cs : tuple[float], f : Vector):
+        a = [0, -Cs[0] / Bs[0]]
+        b = [0, f[0] / Bs[0]]
+        c = [0, -As[0] / Bs[0]]
+        n = f.m - 1
+        for i in range(1, n):
+            denominator = a[i]*As[i] + Bs[i]
+            a += [-Cs[i] / denominator]
+            b += [(f[i] - As[i]*b[i]) / denominator]
+            c += [-As[i]*c[i] / denominator]
+        denominator = Bs[n] + As[n]*(a[n] + c[n])
+        mu = [-Cs[n] / denominator]
+        nu = [(f[n] - As[n]*b[n]) / denominator]
+        for i in range(n):
+            n_i = n - i
+            mu += [a[n_i]*mu[i] + c[n_i]*mu[0]]
+            nu += [a[n_i]*nu[i] + b[n_i] + c[n_i]*nu[0]]
+        x = Vector.zeros(n + 1)
+        x[0] = nu[n] / (1 - mu[n])
+        for i in range(1, n+1):
+            x[n-i] = mu[i]*x[0] + nu[i]
         return x
 
 # calculate Jacobian with 2nd order method
