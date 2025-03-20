@@ -166,6 +166,9 @@ class Vector(Matrix):
             data = args[0]
         super().__init__([[item] for item in data])
 
+    def toList(self):
+        return [row[0] for row in self.data]
+
     @staticmethod
     def zeros(size : int):
         return Vector([0 for i in range(size)])

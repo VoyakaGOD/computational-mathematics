@@ -63,7 +63,7 @@ class LinearSolver:
             nu += [a[n_i]*nu[i] + b[n_i] + c[n_i]*nu[0]]
         x = Vector.zeros(n + 1)
         x[0] = nu[n] / (1 - mu[n])
-        for i in range(1, n+1):
+        for i in range(n):
             x[n-i] = mu[i]*x[0] + nu[i]
         return x
 
