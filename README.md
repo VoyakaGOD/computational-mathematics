@@ -1,5 +1,5 @@
 ![Jupyter Notebook](https://img.shields.io/badge/Jupyter_Notebook-F37726)
-![repo size](https://img.shields.io/badge/repo_size-433_kb-blue)
+![repo size](https://img.shields.io/badge/repo_size-567_kb-blue)
 
 Repository with laboratory works in computational mathematics.
 
@@ -22,6 +22,10 @@ Repository with laboratory works in computational mathematics.
 ### Lab V[numerical integration]:
 
 ![lab5](lab5.png)
+
+### Lab VI[non-stiff ODE systems]:
+
+![lab6](lab6.png)
 
 ### Lab VIII[boundary value problem for ODE]:
 
