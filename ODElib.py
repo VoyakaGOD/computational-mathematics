@@ -343,10 +343,10 @@ class RosenbrockWannerMethods:
     @staticmethod
     def implicit_1_order(f : VecFunc, u0 : Vector, h : float, N : int):
         u = [u0]
-        J = Differetiator.J(f, u0)
         dim = u0.m
-        A = Matrix.identity(dim) - h  * J
         for n in range(N):
+            J = Differetiator.J(f, u[n])
+            A = Matrix.identity(dim) - h  * J
             k1 = LinearSolver.solve_system(A, h * f(u[n]), Vector.zeros(dim))
             u += [u[n] + k1]
             ODEIOSettings.out((n+1) / N)
@@ -357,10 +357,10 @@ class RosenbrockWannerMethods:
         u = [u0]
         g = 1.7071
         b = 0.2929
-        J = Differetiator.J(f, u0)
         dim = u0.m
-        A = Matrix.identity(dim) - h * g  * J
         for n in range(N):
+            J = Differetiator.J(f, u[n])
+            A = Matrix.identity(dim) - h * g  * J
             k1 = LinearSolver.solve_system(A, h * f(u[n]), Vector.zeros(dim))
             k2 = LinearSolver.solve_system(A, h * f(u[n] + k1), Vector.zeros(dim))
             u += [u[n] + b * (k1 + k2)]
@@ -371,13 +371,13 @@ class RosenbrockWannerMethods:
     def implicit_3_order(f : VecFunc, u0 : Vector, h : float, N : int):
         u = [u0]
         g = 0.25
-        J = Differetiator.J(f, u0)
         dim = u0.m
         bs = [0.115740740740741, 0.548927875243268, 0.335331647015991]
         a31 = 1.867943637803922
         a32 = 0.234444971391589
-        A = Matrix.identity(dim) - h * g  * J
         for n in range(N):
+            J = Differetiator.J(f, u[n])
+            A = Matrix.identity(dim) - h * g  * J
             k1 = LinearSolver.solve_system(A, h * f(u[n]), Vector.zeros(dim))
             k2 = LinearSolver.solve_system(A, h * f(u[n] + 2*k1), Vector.zeros(dim))
             k3 = LinearSolver.solve_system(A, h * f(u[n] + a31*k1 + a32*k2), Vector.zeros(dim))
