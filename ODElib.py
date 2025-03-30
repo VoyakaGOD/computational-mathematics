@@ -4,6 +4,9 @@ from matrixlib import *
 VecTFunc = Callable[[float, Vector], Vector]
 VecFunc = Callable[[Vector], Vector]
 
+class ODEIOSettings:
+    out : Callable[[float], None] = lambda percentage: None
+
 class LinearSolver:
     norm = get_Euclidian_norm
     eps = 1e-9
@@ -102,6 +105,7 @@ class RungeKuttaMethods:
         for n in range(N):
             t = t0 + n * h
             u += [u[n] + h * f(t, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -112,6 +116,7 @@ class RungeKuttaMethods:
             k1 = f(t, u[n])
             k2 = f(t + h / 2, u[n] + h / 2 * k1)
             u += [u[n] + h * k2]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -123,6 +128,7 @@ class RungeKuttaMethods:
             k2 = f(t + h/3, u[n] + h * k1/3)
             k3 = f(t + 2/3 * h, u[n] + 2/3 * h * k2)
             u += [u[n] + h * 0.25 * k1 + h * 0.75 * k3]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -135,6 +141,7 @@ class RungeKuttaMethods:
             k3 = f(t + h/2, u[n] + h * k2/2)
             k4 = f(t + h, u[n] + h * k3)
             u += [u[n] + h/6 * (k1 + 2*k2 + 2*k3 + k4)]
+            ODEIOSettings.out((n+1) / N)
         return u
     
     @staticmethod
@@ -145,6 +152,7 @@ class RungeKuttaMethods:
             F = lambda x: x - h*f(t + h, u[n] + x)
             k1 = NonlinearSolver.solve_system(F, Vector.zeros(u0.m))
             u += [u[n] + k1]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -155,6 +163,7 @@ class RungeKuttaMethods:
             F = lambda x: x - h*f(t + h/2, u[n] + x/2)
             k1 = NonlinearSolver.solve_system(F, Vector.zeros(u0.m))
             u += [u[n] + k1]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -168,6 +177,7 @@ class RungeKuttaMethods:
             F2 = lambda x: x - h*f(t + (1-g)*h, u[n] + (1-2*g)*k1 + g*x)
             k2 = NonlinearSolver.solve_system(F2, Vector.zeros(u0.m))
             u += [u[n] + (k1 + k2)/2]
+            ODEIOSettings.out((n+1) / N)
         return u
     
     @staticmethod
@@ -184,6 +194,7 @@ class RungeKuttaMethods:
             F4 = lambda x: x - h*f(t + 1/3*h, u[n] - 5/3*k1 + 4/3*k2 + 2/3*x)
             k4 = NonlinearSolver.solve_system(F4, Vector.zeros(u0.m))
             u += [u[n] - k1 + 3/2*k2 - k3 + 3/2*k4]
+            ODEIOSettings.out((n+1) / N)
         return u
 
 # u0 = [u_0, ..., u_p], p - order of method
@@ -198,6 +209,7 @@ class AdamsMethods:
         for n in range(1, N):
             t = t0 + n * h
             u += [u[n] + h/2 * (3*f(t, u[n]) - f(t-h, u[n-1]))]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -206,6 +218,7 @@ class AdamsMethods:
         for n in range(2, N):
             t = t0 + n * h
             u += [u[n] + h/12 * (23*f(t, u[n]) - 16*f(t-h, u[n-1]) + 5*f(t-2*h, u[n-2]))]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -214,6 +227,7 @@ class AdamsMethods:
         for n in range(3, N):
             t = t0 + n * h
             u += [u[n] + h/24 * (55*f(t, u[n]) - 59*f(t-h, u[n-1]) + 37*f(t-2*h, u[n-2]) - 9*f(t-3*h, u[n-3]))]
+            ODEIOSettings.out((n+1) / N)
         return u
     
     @staticmethod
@@ -223,6 +237,7 @@ class AdamsMethods:
             t = t0 + n * h
             F = lambda x: x - h * f(t + h, x) - u[n]
             u += [NonlinearSolver.solve_system(F, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -232,6 +247,7 @@ class AdamsMethods:
             t = t0 + n * h
             F = lambda x: x - h/2 * (f(t + h, x) + f(t, u[n])) - u[n]
             u += [NonlinearSolver.solve_system(F, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -241,6 +257,7 @@ class AdamsMethods:
             t = t0 + n * h
             F = lambda x: x - h/12 * (5*f(t + h, x) + 8*f(t, u[n]) - f(t-h, u[n-1])) - u[n]
             u += [NonlinearSolver.solve_system(F, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
     
     @staticmethod
@@ -250,6 +267,7 @@ class AdamsMethods:
             t = t0 + n * h
             F = lambda x: x - h/24 * (9*f(t + h, x) + 19*f(t, u[n]) - 5*f(t-h, u[n-1]) + f(t-2*h, u[n-2])) - u[n]
             u += [NonlinearSolver.solve_system(F, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
 # Backward Differentiation Formulas
@@ -265,6 +283,7 @@ class BDF:
         for n in range(1, N):
             t = t0 + n * h
             u += [u[n-1] + 2*h * f(t, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -273,6 +292,7 @@ class BDF:
         for n in range(2, N):
             t = t0 + n * h
             u += [-3/2*u[n] + 3*u[n-1] - 1/2*u[n-2] + 3*h * f(t, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -281,6 +301,7 @@ class BDF:
         for n in range(3, N):
             t = t0 + n * h
             u += [-10/3*u[n] + 6*u[n-1] - 2*u[n-2] + 1/3*u[n-3] + 4*h * f(t, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -294,6 +315,7 @@ class BDF:
             t = t0 + n * h
             F = lambda x: 3/2*x - 2*u[n] + 1/2*u[n-1] - h * f(t+h, x)
             u += [NonlinearSolver.solve_system(F, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -303,6 +325,7 @@ class BDF:
             t = t0 + n * h
             F = lambda x: 11/6*x - 3*u[n] + 3/2*u[n-1] - 1/3*u[n-2] - h * f(t+h, x)
             u += [NonlinearSolver.solve_system(F, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
     @staticmethod
@@ -312,6 +335,7 @@ class BDF:
             t = t0 + n * h
             F = lambda x: 25/12*x - 4*u[n] + 3*u[n-1] - 4/3*u[n-2] + 1/4*u[n-3] - h * f(t+h, x)
             u += [NonlinearSolver.solve_system(F, u[n])]
+            ODEIOSettings.out((n+1) / N)
         return u
 
 # for autonomus systems
@@ -323,19 +347,40 @@ class RosenbrockWannerMethods:
         dim = u0.m
         A = Matrix.identity(dim) - h  * J
         for n in range(N):
-            k1 = LinearSolver.solve_system(A, f(u[n]), Vector.zeros(dim))
-            u += [u[n] + h*k1]
+            k1 = LinearSolver.solve_system(A, h * f(u[n]), Vector.zeros(dim))
+            u += [u[n] + k1]
+            ODEIOSettings.out((n+1) / N)
         return u
-    
+
     @staticmethod
     def implicit_2_order(f : VecFunc, u0 : Vector, h : float, N : int):
         u = [u0]
-        g = 0.2929
+        g = 1.7071
+        b = 0.2929
         J = Differetiator.J(f, u0)
         dim = u0.m
-        A = Matrix.identity(dim)/h - g  * J
+        A = Matrix.identity(dim) - h * g  * J
         for n in range(N):
-            k1 = LinearSolver.solve_system(A, f(u[n]), Vector.zeros(dim))
-            k2 = LinearSolver.solve_system(A, f(u[n] + k1) - 2*J*k1, Vector.zeros(dim))
-            u += [u[n] + k1 + k2/2]
+            k1 = LinearSolver.solve_system(A, h * f(u[n]), Vector.zeros(dim))
+            k2 = LinearSolver.solve_system(A, h * f(u[n] + k1), Vector.zeros(dim))
+            u += [u[n] + b * (k1 + k2)]
+            ODEIOSettings.out((n+1) / N)
+        return u
+
+    @staticmethod
+    def implicit_3_order(f : VecFunc, u0 : Vector, h : float, N : int):
+        u = [u0]
+        g = 0.25
+        J = Differetiator.J(f, u0)
+        dim = u0.m
+        bs = [0.115740740740741, 0.548927875243268, 0.335331647015991]
+        a31 = 1.867943637803922
+        a32 = 0.234444971391589
+        A = Matrix.identity(dim) - h * g  * J
+        for n in range(N):
+            k1 = LinearSolver.solve_system(A, h * f(u[n]), Vector.zeros(dim))
+            k2 = LinearSolver.solve_system(A, h * f(u[n] + 2*k1), Vector.zeros(dim))
+            k3 = LinearSolver.solve_system(A, h * f(u[n] + a31*k1 + a32*k2), Vector.zeros(dim))
+            u += [u[n] + bs[0]*k1 + bs[1]*k2 + bs[2]*k3]
+            ODEIOSettings.out((n+1) / N)
         return u
