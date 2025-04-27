@@ -6,6 +6,7 @@ VecFunc = Callable[[Vector], Vector]
 
 class ODEIOSettings:
     out : Callable[[float], None] = lambda percentage: None
+    info : Callable[[str], None] = lambda text: None
 
 class LinearSolver:
     norm = get_Euclidian_norm
