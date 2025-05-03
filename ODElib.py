@@ -3,6 +3,8 @@ from matrixlib import *
 
 VecTFunc = Callable[[float, Vector], Vector]
 VecFunc = Callable[[Vector], Vector]
+RtoR = Callable[[float], float]
+R2toR = Callable[[float, float], float]
 
 class ODEIOSettings:
     out : Callable[[float], None] = lambda percentage: None
@@ -82,6 +84,9 @@ class Differetiator:
         dfs = [(F(x + dxs[n]) - F(x - dxs[n])) / (2 * Differetiator.step) for n in range(m)]
         data = [[dfs[n][k] for n in range(m)] for k in range(m)]
         return Matrix(data)
+
+def diff(f : RtoR, x : float):
+    return (f(x + Differetiator.step) - f(x - Differetiator.step)) / (2 * Differetiator.step)
 
 # solve F(x) = 0 by Newton, with initial approximation of x = x0
 class NonlinearSolver:
