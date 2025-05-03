@@ -161,6 +161,9 @@ class Matrix:
 
 class Vector(Matrix):
     def __init__(self, *args):
+        if(len(args) == 1) and isinstance(args[0], Matrix):
+            super().__init__(args[0].data)
+            return
         data = args
         if(len(args) == 1) and hasattr(args[0], '__iter__'):
             data = args[0]
