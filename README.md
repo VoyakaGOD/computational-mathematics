@@ -1,5 +1,5 @@
 ![Jupyter Notebook](https://img.shields.io/badge/Jupyter_Notebook-F37726)
-![repo size](https://img.shields.io/badge/repo_size-669_kb-blue)
+![repo size](https://img.shields.io/badge/repo_size-703_kb-blue)
 
 Repository with laboratory works in computational mathematics.
 
@@ -42,3 +42,7 @@ Repository with laboratory works in computational mathematics.
 ### Lab X[Sturm-Liouville problem]:
 
 ![lab10](lab10.png)
+
+### Lab XI[convection equation]:
+
+![lab11](lab11.png)
