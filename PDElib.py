@@ -5,18 +5,20 @@ R2toR = Callable[[float, float], float]
 
 @dataclass
 class Grid:
-    # time
+    # time:
     T : float
     N : int
-    # spatial
+    # spatial:
     L : float
     M : int
 
+# Convection Equation Solver
 # solve u't + c*u'x = f(t, x)
 # WARNING: c > 0
 # u(0, x) = phi(x)
 # u(t, 0) = psi(t)
 class CESolver:
+    @staticmethod
     def __prepare(grid : Grid, phi : RtoR, psi : RtoR):
         tau = grid.T / grid.N
         h = grid.L / grid.M
@@ -25,6 +27,7 @@ class CESolver:
             u += [[psi(tau*n)] + [0 for _ in range(grid.M)]]
         return tau, h, u
 
+    @staticmethod
     def solve_by_upwind_scheme(c : float, grid : Grid, phi : RtoR, psi : RtoR, f : R2toR):
         tau, h, u = CESolver.__prepare(grid, phi, psi)
         cn = c * tau / h # Courant number
@@ -33,6 +36,7 @@ class CESolver:
                 u[n+1][m] = u[n][m] - cn*(u[n][m] - u[n][m-1]) + tau*f(tau * n, h * m)
         return u
 
+    @staticmethod
     def solve_by_rectangle_scheme(c : float, grid : Grid, phi : RtoR, psi : RtoR, f : R2toR):
         tau, h, u = CESolver.__prepare(grid, phi, psi)
         cn = c * tau / h # Courant number
@@ -45,6 +49,7 @@ class CESolver:
                 u[n+1][m] = ct*(u[n][m] + u[n][m-1] - u[n+1][m-1]) - ch*(u[n][m] - u[n][m-1] - u[n+1][m-1]) + cf*f_nm
         return u
 
+    @staticmethod
     def solve_by_Lax_Wendroff_scheme(c: float, grid: Grid, phi: RtoR, psi: RtoR, f: R2toR):
         tau, h, u = CESolver.__prepare(grid, phi, psi)
         cn = c * tau / h  # Courant number
