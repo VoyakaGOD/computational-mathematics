@@ -1,5 +1,5 @@
 ![Jupyter Notebook](https://img.shields.io/badge/Jupyter_Notebook-F37726)
-![repo size](https://img.shields.io/badge/repo_size-733_kb-blue)
+![repo size](https://img.shields.io/badge/repo_size-800_kb-blue)
 
 Repository with laboratory works in computational mathematics.
 
@@ -46,3 +46,7 @@ Repository with laboratory works in computational mathematics.
 ### Lab XI[convection equation]:
 
 ![lab11](lab11.png)
+
+### Lab XII[phase transition]:
+
+![lab12](lab12.png)
